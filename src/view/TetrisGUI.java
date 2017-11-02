@@ -11,12 +11,17 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.net.URL;
+
+import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import model.Board;
+import sun.tools.jar.Main;
 
 /**
  * The Tetris GUI.
@@ -75,7 +80,8 @@ public class TetrisGUI extends JFrame implements PropertyChangeListener {
         final ImageIcon icon = new ImageIcon("icon.gif"); 
         setIconImage(icon.getImage());
         
-        final Image bg = Toolkit.getDefaultToolkit().getImage("galaxy.jpg");
+        URL url = getClass().getResource("/galaxy.jpg");
+        final Image bg = Toolkit.getDefaultToolkit().getImage(url);
         setContentPane(new BackgroundImage(bg));
 
         setLayout(new FlowLayout(FlowLayout.CENTER, PADDING, PADDING));
