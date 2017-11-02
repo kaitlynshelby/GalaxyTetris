@@ -1,0 +1,165 @@
+/*
+ * TCSS 305 - Spring 2016
+ * Assignment 6 - Tetris
+ */
+package view;
+
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import model.Board;
+
+/**
+ * The Tetris GUI.
+ * 
+ * @author Kaitlyn Kinerk
+ * @version 1.0
+ */
+@SuppressWarnings("serial")
+public class TetrisGUI extends JFrame {
+
+    /** A scalable amount of padding to put around components. */
+    public static final int PADDING = 20;
+
+    /** The GUI's game board. */
+    private TetrisBoard myTetrisBoard;
+
+    /** The piece preview panel to add to this frame. */
+    private PiecePreview myPiecePreview;
+
+    /** The info panel to add to this frame. */
+    private InfoPanel myInfoPanel;
+
+    private Box myLeftBox;
+ 
+    private Box myRightBox;
+
+    private Board myBoard;
+    
+    /**
+     * Constructs the GUI with all necessary components.
+     */
+    public TetrisGUI() {
+        super();
+        
+        myLeftBox = new Box(BoxLayout.X_AXIS);
+        myRightBox = new Box(BoxLayout.Y_AXIS);
+        myTetrisBoard = new TetrisBoard(this);
+        myPiecePreview = new PiecePreview();
+        myInfoPanel = new InfoPanel(myTetrisBoard);
+
+        addObservers();
+        
+        setupFrame();
+        setVisible(true);
+        
+
+    }
+
+
+
+
+    public final void addObservers() {
+        myTetrisBoard.getBoard().addObserver(myTetrisBoard);
+        myTetrisBoard.getBoard().addObserver(myPiecePreview);
+        myTetrisBoard.getBoard().addObserver(myInfoPanel);
+    }
+
+
+
+
+    /**
+     * Sets up the JFrame.
+     */
+    private void setupFrame() {
+ 
+        setTitle("Galaxy Tetris");
+        final ImageIcon icon = new ImageIcon("icon.gif"); 
+        setIconImage(icon.getImage());
+        
+        final Image bg = Toolkit.getDefaultToolkit().getImage("galaxy.jpg");
+        setContentPane(new BackgroundImage(bg));
+
+
+        setLayout(new FlowLayout(FlowLayout.CENTER, PADDING, PADDING));
+
+        addLeftColumn();
+        addRightColumn();
+       
+        pack();
+        setResizable(false);
+    
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null); 
+        
+    }
+    
+    
+    /**
+     * Adds the left column containing the game board to the frame.
+     */
+    private void addLeftColumn() {
+        myLeftBox.add(myTetrisBoard);
+        add(myLeftBox);   
+    }
+    
+    /**
+     * Adds the right column containing the piece preview panel and game information panel to 
+     * the frame.
+     */
+    private void addRightColumn() {
+     
+        myRightBox.add(myPiecePreview);
+        myRightBox.add(Box.createVerticalStrut(PADDING));
+        myRightBox.add(myInfoPanel);
+        add(myRightBox);
+    }
+    
+    public Box getLeftBox() {
+        return myLeftBox;
+    }
+    
+    public Box getRightBox() {
+        return myRightBox;
+    }
+    
+
+    
+    private class BackgroundImage extends JComponent {
+        
+        private Image myImage;
+        
+        public BackgroundImage(Image theImage) {
+            myImage = theImage;
+        }
+        
+        @Override
+        public void paintComponent(Graphics theGraphics) {
+            super.paintComponent(theGraphics);
+            Graphics2D g2d = (Graphics2D) theGraphics;
+            
+            g2d.drawImage(myImage, 0 ,0, this);
+        }
+    }
+
+    public PiecePreview getPiecePreview() {
+        return myPiecePreview;
+    }
+
+
+    public InfoPanel getInfoPanel() {
+        return myInfoPanel;
+    }
+
+
+}

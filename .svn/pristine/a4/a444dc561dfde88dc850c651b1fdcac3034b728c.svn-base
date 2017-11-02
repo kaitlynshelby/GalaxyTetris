@@ -1,0 +1,163 @@
+/*
+ * TCSS 305 - Spring 2016
+ * Assignment 6 - Tetris 
+ */
+package view;
+
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+
+import javax.swing.ButtonGroup;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSlider;
+import javax.swing.SwingConstants;
+
+import model.Board;
+
+/**
+ * A menu bar for the Tetris GUI.
+ * 
+ * @author Kaitlyn Kinerk
+ * @version 1.0
+ */
+@SuppressWarnings("serial")
+public class MenuBar extends JMenuBar {
+    
+    /** The frame this menu bar was added to.*/
+    private final JFrame myFrame;
+    
+    /** The Tetris board this menu bar works with. */
+   private TetrisBoard myTetrisBoard;
+
+    private Board myBoard;
+    
+    /**
+     * Constructs a menu bar to use with the Tetris GUI.
+     * 
+     * @param theFrame the JFrame this menu bar was added to.
+     * @param theBoard the TetrisBoard this menu bar communicates with.
+     */
+    public MenuBar(final JFrame theFrame, final Board theBoard, TetrisBoard theTetrisBoard) {
+        super();
+        myTetrisBoard = theTetrisBoard;
+        myBoard = theBoard;
+        myFrame = theFrame;
+        
+        addGameMenu();
+        addOptionsMenu();
+
+    }
+
+    /**
+     * Adds a complete game menu to the menu bar.
+     */
+    private void addGameMenu() {
+        
+        final JMenu gameMenu = new JMenu("Game");
+        gameMenu.setMnemonic(KeyEvent.VK_G);
+        
+        // create new game button
+        final JMenuItem newGame = new JMenuItem("Start New Game...");
+        newGame.setMnemonic(KeyEvent.VK_N);
+        newGame.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent theEvent) {
+                myTetrisBoard.pauseTimer();
+                ((TetrisGUI) myFrame).displayNewGameSettingsDialog();
+            }
+        });
+        
+        // create end game button
+        final JMenuItem endGame = new JMenuItem("End Current Game...");
+        endGame.setMnemonic(KeyEvent.VK_E);
+        endGame.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent theEvent) {
+                myTetrisBoard.pauseTimer();
+                int result = JOptionPane.showOptionDialog(myFrame, 
+                                                          "Are you sure you want to end this game?", 
+                                                          "End Current Game",
+                                                          JOptionPane.YES_NO_OPTION, 
+                                                          JOptionPane.QUESTION_MESSAGE, null, null, 
+                                                          JOptionPane.NO_OPTION);
+                           if (result == JOptionPane.YES_OPTION) {
+                               myTetrisBoard.setGameOver(true); 
+                               
+                           }
+            }  
+        });
+
+        final JMenuItem quit = new JMenuItem("Quit");
+        quit.setMnemonic(KeyEvent.VK_Q);
+        quit.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent theEvent) {
+                myFrame.dispatchEvent(new WindowEvent((Window) myFrame, 
+                                                      WindowEvent.WINDOW_CLOSING));
+            }
+        });
+        
+        gameMenu.add(newGame);
+        gameMenu.add(endGame);
+        gameMenu.addSeparator();
+        gameMenu.add(quit);
+        add(gameMenu);
+    }
+    
+    /**
+     * Adds a complete options menu to the menu bar.
+     */
+    private void addOptionsMenu() {
+        
+        final JMenu optionsMenu = new JMenu("Options");
+        optionsMenu.setMnemonic(KeyEvent.VK_O);
+        
+        final JCheckBoxMenuItem musicEnabled = new JCheckBoxMenuItem("Music On");
+        musicEnabled.setMnemonic(KeyEvent.VK_M);
+        musicEnabled.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent theEvent) {
+                // enable/disable sound
+            }
+        });
+        
+        final JCheckBoxMenuItem soundEnabled = new JCheckBoxMenuItem("Sound FX On");
+        soundEnabled.setMnemonic(KeyEvent.VK_S);
+        soundEnabled.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent theEvent) {
+              
+            }    
+        });
+        
+
+        optionsMenu.add(musicEnabled);
+        optionsMenu.add(soundEnabled);
+        add(optionsMenu);
+        
+    }
+   
+    
+
+}

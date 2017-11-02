@@ -1,0 +1,116 @@
+/**
+ * 
+ */
+package view;
+
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSlider;
+import javax.swing.SwingConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+/**
+ * @author Kaitlyn
+ *
+ */
+public class GameSettingsPanel extends JPanel {
+    
+    
+    
+    private JSlider myWidthSlider;
+    private JSlider myHeightSlider;
+    protected TetrisBoard myTetrisBoard;
+
+    
+    public GameSettingsPanel() {
+        
+
+        myWidthSlider = new JSlider(SwingConstants.HORIZONTAL, 5, 30, 10);
+        myHeightSlider = new JSlider(SwingConstants.HORIZONTAL, 10, 30, 20);
+        
+        
+        setupSliders();
+        layoutPanel();
+        addGameModeButtons();
+        addListeners();
+        
+        
+    }
+    
+    private void addListeners() {
+
+        
+    }
+
+    private void setupSliders() {
+        myWidthSlider.setMajorTickSpacing(5);
+        myWidthSlider.setMinorTickSpacing(1);
+        myWidthSlider.setPaintTicks(true);
+        myWidthSlider.setPaintLabels(true);
+        
+        myHeightSlider.setMajorTickSpacing(5);
+        myHeightSlider.setMinorTickSpacing(1);
+        myHeightSlider.setPaintTicks(true);
+        myHeightSlider.setPaintLabels(true);
+
+    }
+
+
+    private void layoutPanel() {
+        setLayout(new GridLayout(0, 1));
+        
+        add(new JLabel("Choose board size: "));
+        add(new JLabel("Width"));
+        add(myWidthSlider);
+        add(new JLabel("Height"));
+        add(myHeightSlider);
+        
+        add(new JLabel("Choose game mode: "));
+    }
+
+    private void addGameModeButtons() {
+        final JRadioButton classic = new JRadioButton("Classic mode - a standard game of"
+                        + " Tetris.");
+        final JRadioButton blackHole = new JRadioButton("Black hole mode - pieces turn "
+                        + "invisible after they freeze in place; hope you have"
+                        + " a good memory!");
+        
+        final ButtonGroup btns = new ButtonGroup();
+        
+        btns.add(classic);
+        btns.add(blackHole);
+        
+        add(classic);
+        add(blackHole);
+        
+        classic.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+             //   myTetrisBoard.setGameMode("classic");
+                
+            }
+            
+        });
+
+    }
+    
+    public TetrisBoard getBoard() {
+        return myTetrisBoard;
+    }
+    
+    public static void showNewGameDialog() {
+        JOptionPane.showConfirmDialog(null, new GameSettingsPanel(),
+                                      "New Game Settings", JOptionPane.OK_CANCEL_OPTION,
+                                      JOptionPane.PLAIN_MESSAGE);
+    }
+}

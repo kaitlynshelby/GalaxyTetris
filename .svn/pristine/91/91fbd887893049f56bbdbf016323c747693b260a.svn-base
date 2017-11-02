@@ -1,0 +1,152 @@
+/*
+ * TCSS 305 - Spring 2016
+ * Assignment 6 - Tetris
+ */
+package view;
+
+import java.awt.Dimension;
+import java.awt.GridLayout;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import model.Board;
+
+/**
+ * The Tetris GUI.
+ * 
+ * @author Kaitlyn Kinerk
+ * @version 1.0
+ */
+@SuppressWarnings("serial")
+public class TetrisGUI extends JFrame {
+    
+    /** A scalable JFrame width. */
+    public static final int WIDTH = 200;
+    
+    /** A scalable JFrame height. */
+    public static final int HEIGHT = 200;
+    
+    /** A scalable amount of padding to put around components. */
+    public static final int PADDING = 8;
+    
+    /**
+     * The number of pixels taken up by the JFrame and MenuBar which contribute towards the 
+     * total height of the frame.
+     */
+    public static final int HEIGHT_CONSTANT = 52;
+   
+    /** The GUI's game board. */
+    private TetrisBoard myTetrisBoard;
+    
+    /** The scaled number of pixels to use for padding. */
+    private int myPadding;
+    
+    /** The height of the GUI. */
+    private int myHeight;
+
+    /** The width of the GUI. */
+    private int myWidth;
+
+    /** The piece preview panel to add to this frame. */
+    private PiecePreview myPiecePreview;
+
+    /** The info panel to add to this frame. */
+    private InfoPanel myInfoPanel;
+
+    /** The back-end game board logic to connect to the front-end code.*/
+    private Board myBoard;
+    
+    
+ 
+    /**
+     * Constructs the GUI with all necessary components.
+     */
+    public TetrisGUI() {
+        super();
+        
+        instantiateFields();
+        addObservers();
+        setupFrame();
+        
+        setVisible(true);
+    }
+    
+    
+    /**
+     * Instantiates all fields. Fields relating to layout are scaled to the appropriate size 
+     * as determined by the scale of the Tetris board.
+     */
+    private void instantiateFields() {
+        // connect back-end logic to UI game board.
+        myBoard = new Board();
+        myTetrisBoard = new TetrisBoard(myBoard);
+        
+        myPiecePreview = new PiecePreview(myTetrisBoard);
+        myInfoPanel = new InfoPanel(myTetrisBoard);
+        
+        myPadding = PADDING * myTetrisBoard.getScale();
+        myHeight =  HEIGHT_CONSTANT + myPadding * 2 + HEIGHT * myTetrisBoard.getScale();
+        // paddingWidthContributers represents the width contributed to the frame from padding.
+        final int paddingWidthContributers = 3;
+        myWidth = WIDTH * myTetrisBoard.getScale() + myPadding * paddingWidthContributers; 
+    }
+
+
+
+    /**
+     * Registers all Board class observers.
+     */
+    private void addObservers() {
+        myBoard.addObserver(myTetrisBoard);
+        myBoard.addObserver(myPiecePreview);
+        myBoard.addObserver(myInfoPanel);
+    }
+
+    /**
+     * Sets up the JFrame.
+     */
+    private void setupFrame() {
+        this.setTitle("Galaxy Tetris");
+        setContentPane(new JLabel(new ImageIcon("galaxy.jpg")));
+        
+        setLayout(new GridLayout(0, 2));
+        
+        addLeftColumn();
+        addRightColumn();
+        
+        setJMenuBar(new MenuBar(this, myTetrisBoard));
+        setResizable(false);
+    
+        setSize(new Dimension(myWidth, myHeight));
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null); 
+        
+    }
+    
+    /**
+     * Adds the left column containing the game board to the frame.
+     */
+    private void addLeftColumn() {
+        final Box b = new Box(BoxLayout.X_AXIS);
+        b.add(Box.createHorizontalStrut(myPadding));
+        b.add(myTetrisBoard);
+        add(b);   
+    }
+    
+    /**
+     * Adds the right column containing the piece preview panel and game information panel to 
+     * the frame.
+     */
+    private void addRightColumn() {
+        final Box b = new Box(BoxLayout.Y_AXIS);
+        b.add(Box.createVerticalStrut(myPadding));
+        b.add(myPiecePreview);
+        b.add(Box.createVerticalStrut(myPadding));
+        b.add(myInfoPanel);
+        b.add(Box.createVerticalStrut(myPadding));
+        add(b);
+    }
+}

@@ -1,0 +1,196 @@
+/*
+ * TCSS 305 - Spring 2016
+ * Assignment 6 - Tetris
+ */
+package view;
+
+import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Toolkit;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSlider;
+import javax.swing.SwingConstants;
+
+import model.Board;
+
+/**
+ * The Tetris GUI.
+ * 
+ * @author Kaitlyn Kinerk
+ * @version 1.0
+ */
+@SuppressWarnings("serial")
+public class TetrisGUI extends JFrame {
+
+    /** A scalable amount of padding to put around components. */
+    public static final int PADDING = 20;
+
+    /** The GUI's game board. */
+    private TetrisBoard myTetrisBoard;
+
+    /** The piece preview panel to add to this frame. */
+    private PiecePreview myPiecePreview;
+
+    /** The info panel to add to this frame. */
+    private InfoPanel myInfoPanel;
+
+    /** The back-end game board logic to connect to the front-end code.*/
+    private Board myBoard;
+    
+    
+ 
+    /**
+     * Constructs the GUI with all necessary components.
+     */
+    public TetrisGUI() {
+        super();
+        
+        myBoard = new Board(10, 20);
+        myTetrisBoard = new TetrisBoard(myBoard, this);
+        myPiecePreview = new PiecePreview(myTetrisBoard.getHeight() / 3 - PADDING / 2);
+        myInfoPanel = new InfoPanel(myTetrisBoard.getHeight() * 2 / 3 - PADDING / 2,
+                                    myTetrisBoard);
+        
+        addObservers();
+        setupFrame();
+        
+        setVisible(true);
+        myBoard.newGame();
+    }
+
+    /**
+     * Registers all Board class observers.
+     */
+    private void addObservers() {
+        myBoard.addObserver(myTetrisBoard);
+        myBoard.addObserver(myPiecePreview);
+        myBoard.addObserver(myInfoPanel);
+
+    }
+
+    /**
+     * Sets up the JFrame.
+     */
+    private void setupFrame() {
+        setTitle("Galaxy Tetris");
+        final ImageIcon icon = new ImageIcon("icon.gif"); 
+        setIconImage(icon.getImage());
+        
+        Image bg = Toolkit.getDefaultToolkit().getImage("galaxy.jpg");
+        setContentPane(new BackgroundImage(bg));
+        
+        setJMenuBar(new MenuBar(this, myBoard, myTetrisBoard));
+
+        setLayout(new FlowLayout(FlowLayout.CENTER, PADDING, PADDING));
+
+        addLeftColumn();
+        addRightColumn();
+       
+        pack();
+        setResizable(false);
+    
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null); 
+        
+    }
+    
+    
+    /**
+     * Adds the left column containing the game board to the frame.
+     */
+    private void addLeftColumn() {
+        final Box b = new Box(BoxLayout.X_AXIS);
+        b.add(myTetrisBoard);
+        add(b);   
+    }
+    
+    /**
+     * Adds the right column containing the piece preview panel and game information panel to 
+     * the frame.
+     */
+    private void addRightColumn() {
+        final Box b = new Box(BoxLayout.Y_AXIS);
+        b.add(myPiecePreview);
+        b.add(Box.createVerticalStrut(PADDING));
+        b.add(myInfoPanel);
+        add(b);
+    }
+    
+    public void displayNewGameSettingsDialog() {
+        JPanel p = new JPanel();
+        p.setLayout(new GridLayout(0, 1));
+        
+        JSlider wSlider = new JSlider(SwingConstants.HORIZONTAL, 5, 30, 10);
+        wSlider.setMajorTickSpacing(5);
+        wSlider.setMinorTickSpacing(1);
+        wSlider.setPaintTicks(true);
+        wSlider.setPaintLabels(true);
+
+        JSlider hSlider = new JSlider(SwingConstants.HORIZONTAL, 10, 30, 20);
+        hSlider.setMajorTickSpacing(5);
+        hSlider.setMinorTickSpacing(1);
+        hSlider.setPaintTicks(true);
+        hSlider.setPaintLabels(true);
+   
+        p.add(new JLabel("Choose board size: "));
+        p.add(new JLabel("Width"));
+        p.add(wSlider);
+        p.add(new JLabel("Height"));
+        p.add(hSlider);
+        
+        p.add(new JLabel("Choose game mode: "));
+        
+        ButtonGroup btns = new ButtonGroup();
+        JRadioButton classic = new JRadioButton("Classic mode - a standard game of"
+                        + " Tetris.");
+        JRadioButton gravity = new JRadioButton("Anti-gravity mode - pieces float "
+                        + "upwards; there's no gravity in space!");
+        JRadioButton blackHole = new JRadioButton("Black hole mode - pieces turn invisible "
+                        + "after they freeze in place;\n\n hope you have"
+                        + " a good memory!");
+        
+        btns.add(classic);
+        btns.add(gravity);
+        btns.add(blackHole);
+        
+        p.add(classic);
+        p.add(gravity);
+        p.add(blackHole);
+        
+        JOptionPane.showConfirmDialog(this, p, 
+                                      "New Game Settings", JOptionPane.OK_CANCEL_OPTION, 
+                                      JOptionPane.PLAIN_MESSAGE);
+      
+    }
+    
+    private class BackgroundImage extends JComponent {
+        
+        private Image myImage;
+        
+        public BackgroundImage(Image theImage) {
+            myImage = theImage;
+        }
+        
+        @Override
+        public void paintComponent(Graphics theGraphics) {
+            super.paintComponent(theGraphics);
+            Graphics2D g2d = (Graphics2D) theGraphics;
+            
+            g2d.drawImage(myImage, 0 ,0, this);
+        }
+    }
+    
+    
+}
